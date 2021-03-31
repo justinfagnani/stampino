@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "incremental-dom": "^0.7.0",
-    "jexpr": "^1.0.0-pre.1"
+    "jexpr": "^1.0.0-pre.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.0.0",
