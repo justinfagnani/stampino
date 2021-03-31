@@ -315,4 +315,56 @@ describe('stampino', function() {
     });
   });
 
+  describe('given a template with property attribute syntax', function() {
+    let element: StampinoTestElement;
+    beforeEach(async function() {
+      element = await fixture(html`
+        <stampino-test-element .model="${{ property: 'value' }}">
+          <template>
+            <give-property .property="{{ property }}"></give-property>
+          </template>
+        </stampino-test-element>
+      `);
+    });
+    it('renders the element with the property, not the attribute', function() {
+      expect(element.$('give-property').hasAttribute('.property'), 'hasAttribute .').to.be.false;
+      expect(element.$('give-property').hasAttribute('property'), 'hasAttribute').to.be.false;
+      expect(element.$('give-property').property, 'property').to.equal('value');
+    });
+    describe('then updating the model', function() {
+      beforeEach(function() {
+        element.model = { property: 'new' };
+      });
+      it('rerenders', function() {
+        expect(element.$('give-property').property, 'property').to.equal('new');
+      });
+    });
+  });
+
+  describe('given a template with boolean attribute syntax', function() {
+    let element: StampinoTestElement;
+    beforeEach(async function() {
+      element = await fixture(html`
+        <stampino-test-element .model="${{ falsey: 0, truthy: 1 }}">
+          <template>
+            <give-attr ?falsey="{{ falsey }}" ?truthy="{{ truthy }}"></give-attr>
+          </template>
+        </stampino-test-element>
+      `);
+    });
+    it('renders the element with the truthy attr only', function() {
+      expect(element.$('give-attr').hasAttribute('truthy'), 'truthy').to.be.true;
+      expect(element.$('give-attr').hasAttribute('falsey'), 'falsey').to.be.false;
+    });
+    describe('then updating the model', function() {
+      beforeEach(function() {
+        element.model = { falsey: true, truthy: false };
+      });
+      it('rerenders', function() {
+        expect(element.$('give-attr').hasAttribute('truthy'), 'swapped truthy').to.be.false;
+        expect(element.$('give-attr').hasAttribute('falsey'), 'swapped falsey').to.be.true;
+      });
+    });
+  });
+
 })

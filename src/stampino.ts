@@ -225,24 +225,38 @@ export function renderNode(
         let propertyValuePairs: any[] = [];
         let attributes = element.attributes;
         let handledAttributes = <Attr[]>[];
+        let booleanAttrs: ({name: string, value: boolean}[]) = [];
+        let plainAttrs: ({name: string, value: boolean}[]) = [];
         for (let i = 0; i < attributes.length; i++) {
           let attr = attributes[i];
           if (attributeHandler && attributeHandler.matches(attr.name)) {
             handledAttributes.push(attr);
-          } else {
-            const propertyName = attr.name === 'class' ? 'className' : attr.name;
-            // TODO: if attribute is a literal, add it to statics instead
-            propertyValuePairs.push(propertyName);
+          } else if (attr.name.startsWith('.')) {
+            propertyValuePairs.push(attr.name.replace('.', ''));
             propertyValuePairs.push(getValue(attr, model));
+          } else if (attr.name.startsWith('?')) {
+            booleanAttrs.push({name: attr.name.replace('?', ''), value: !!getValue(attr, model)});
+          } else {
+            plainAttrs.push({name: attr.name, value: getValue(attr, model)})
           }
         }
         let tagName = element.tagName.toLowerCase();
-        let el = idom.elementOpen(tagName, null, null, ...propertyValuePairs);
+        let el = idom.elementOpenStart(tagName, null, propertyValuePairs);
 
         for (let i = 0; i < handledAttributes.length; i++) {
           let attr = handledAttributes[i];
           attributeHandler.handle(el, attr.name, attr.value, model);
         }
+
+        for (const { name, value } of booleanAttrs) {
+          idom.attr(name, value ? '' : null);
+        }
+
+        for (const { name, value } of plainAttrs) {
+          idom.attr(name, value);
+        }
+
+        idom.elementOpenEnd();
 
         let children = node.childNodes;
         for (let i = 0; i < children.length; i++) {
