@@ -117,5 +117,13 @@
       </template>
     </template>
 
+    <template id="demo-8">
+      <template name="title">Null Safe Expressions</template>
+      <template name="demo">
+        <p>This template contains deep access of a nullable object:</p>
+        <div><code>\{{nullable.missing.property || 'none'}}</code>: <span>{{nullable.missing.property || 'none'}}</span></div>
+      </template>
+    </template>
+
   </body>
 </html>
