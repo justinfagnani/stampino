@@ -11,11 +11,11 @@
   "scripts": {
     "build": "tsc",
     "test": "wtr test/**/*_test.js --node-resolve --playwright --browsers chromium",
+    "benchmark": "tach --config tachometer.config.json",
     "format": "prettier \"src/**/*.ts\" --write",
     "demo": "wds --node-resolve"
   },
   "dependencies": {
-    "incremental-dom": "^0.7.0",
     "jexpr": "^1.0.0-pre.1",
     "lit-html": "^2.0.0-pre.7"
   },
@@ -29,6 +29,7 @@
     "@web/test-runner-mocha": "^0.7.2",
     "@web/test-runner-playwright": "^0.8.4",
     "prettier": "^2.2.1",
+    "tachometer": "^0.5.8",
     "typescript": "^4.2.0"
   },
   "keywords": [
@@ -36,7 +37,7 @@
     "template",
     "binding"
   ],
-  "author": "Jusitn Fagnani <justin@fagnani.com>",
+  "author": "Justin Fagnani <justin@fagnani.com>",
   "license": "Apache-2.0",
   "repository": "justinfagnani/stampino",
   "bugs": {

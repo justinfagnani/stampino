@@ -1,6 +1,6 @@
-# stampino
+# Stampino
 
-Stampino is a fast and extremely powerful HTML template system, where you write templates in real HTML `<template>` tags:
+Stampino is a fast and extremely powerful HTML template system, where you write dynamic templates using real HTML `<template>` tags:
 
 ```html
 <template id="my-template">
@@ -10,15 +10,14 @@ Stampino is a fast and extremely powerful HTML template system, where you write 
 
 ## Overview
 
-Stampino use HTML [`<template>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) tags to define templates, [lit-html](https://lit-html.polymer-project.org/) for the inderlying template rendering, and [jexpr](https://www.npmjs.com/package/jexpr) for binding expressions.
+Stampino uses HTML [`<template>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template) tags to define templates, [lit-html](https://lit-html.polymer-project.org/) for the underlying template rendering, and [jexpr](https://www.npmjs.com/package/jexpr) for binding expressions.
 
-Stampino is based on the idea that a template defines a function from data to DOM, so it transforms `<template>` elements into lit-html render functions. Control flow, emplate composition, and extensibility are built on top of function composition.
+Stampino is based on the idea that a template defines a function from data to DOM, so it transforms `<template>` elements into lit-html render functions. Control flow, template composition, and extensibility are built on top of function composition.
 
 This approach leads to a low-cost for features like conditionals and repeating, which are just `<template>`s themselves:
 
 ```html
 <template id="my-template">
-  
   <h2>Messages</h2>
 
   <template type="if" if="{{ important }}">
@@ -28,7 +27,6 @@ This approach leads to a low-cost for features like conditionals and repeating, 
   <template type="repeat" repeat="{{ messages }}">
     <p>{{ item.text }}</p>
   </template>
-
 </template>
 ```
 
@@ -38,7 +36,7 @@ This approach leads to a low-cost for features like conditionals and repeating, 
 
 Stampino is very useful for custom elements that want to allow custom rendering or user-extensibility.
 
-Consider an example of an `<npm-packages>` element that fetchs a list of npm packages and renders it, but want to let users override the default rendering. The element can accept a template as a child and render it with Stampino and the package data:
+Consider the example of an `<npm-packages>` element that fetches a list of npm packages and renders it, letting users override a default shadow-DOM template. The element may accept a template as a child and render it with Stampino and the package data:
 
 ```html
 <script type="module" src="/npm-packages.js"></script>
@@ -50,6 +48,8 @@ Consider an example of an `<npm-packages>` element that fetchs a list of npm pac
   </template>
 </npm-packages>
 ```
+
+## Features
 
 When Stampino processes a template, it creates a lit-html template function:
 
@@ -72,15 +72,12 @@ const myTemplate = stampino.prepareTemplate(templateElement);
 render(myTemplate({name: 'World'}), document.body);
 ```
 
-## Features
-
 ### Control flow
 
 Stampino control flow is based on nested `<template>` elements:
 
 ```html
-<template id="my-template">
-</template>
+<template id="my-template"> </template>
 ```
 
 ### Simple
@@ -91,12 +88,10 @@ Stampino keeps things simple by relying on standard HTML `<template>` tags, usin
 
 Stampino doesn't concern itself with custom elements, DOM and style encapsulation, or any of the other amazing features of web components, because that's what web components are for! It's great for implementing the shadow DOM rendering for custom elements.
 
-By using HTML `<template>` tags, Stampino templates can be defined right inline with your HTML. Browsers will not render template contents, run script, or apply CSS.
+By using HTML `<template>` tags, Stampino templates can be defined inline with your HTML. Browsers will not render template contents, run scripts, or apply CSS.
 
 ```html
-<template id="my-template">
-  This is a template.
-</template>
+<template id="my-template"> This is a template. </template>
 ```
 
 Stampino doesn't find and render templates automatically, because it's so easy to do with standard DOM APIs:
@@ -118,7 +113,7 @@ stampino.render(template, container, model);
 
 ### Fast
 
-Stampino uses lit-html to update DOM in place when re-rendered with new data. lit-html only updates the parts of the DOM that need updating, much like virtual-dom approaches, but without extra trees of virtual DOM nodes in memory.
+Stampino uses [lit-html](https://lit-html.polymer-project.org) to update DOM in place when re-rendered with new data. lit-html only updates the parts of the DOM that need updating, much like virtual-dom approaches, but without extra trees of virtual DOM nodes in memory.
 
 Stampino creates a lit-html template function from a `<template>` tag by walking its content and creating a lit-html "template part" for each expression.
 
@@ -126,20 +121,19 @@ Stampino creates a lit-html template function from a `<template>` tag by walking
 
 #### Inheritance and Composition
 
-stampino conceptually views a template as a function of the form:
+Stampino conceptually views a template as a function of the form:
 
-```javascript
-  renderFunction(model); // simplified, a little
+```typescript
+   // simplified, a little
+  renderTemplate<Model extends unknown>(model: Model): TemplateResult;
 ```
 
-`renderFunction` is then called from within an incremental-dom patch operation to update a particular container node. `renderFunction` can call, and be called by, other render functions. Using this basic concept stampino builds template inheritance and "blocks" or named holes that can be filled by sub-templates, similar to sub routines.
+`renderTemplate` is then called with the user's model argument and the resulting `TemplateResult` is passed to lit-html to efficiently update the DOM. This conceptual `renderTemplate` 'function' can call, and be called by, other similar `renderTemplate`. Using this basic concept Stampino builds template inheritance and "blocks" or named holes that can be filled by sub-templates, similar to sub routines.
 
 ```html
 <template id="base-template">
   This the base template, that defines a "block"
-  <template name="A">
-    This is a block with default content.
-  </template>
+  <template name="A"> This is a block with default content. </template>
 </template>
 
 <template id="my-template">
@@ -174,7 +168,7 @@ Templates can explicitly include their super template like this:
 
 #### Binding Expressions
 
-`jexpr` provides a fast and expressive expression evaluator, which is a subset of JavaScript expressions. Like incremental-dom, `jexpr` has been engineered to reduce memory allocations and garbage collection.
+`jexpr` provides a fast and expressive expression evaluator, which is a subset of JavaScript expressions. Like lit-html, `jexpr` has been engineered to reduce memory allocations and garbage collection.
 
 Expressions can include variables, property access, arithmetic, function and method calls, lists, maps and filters.
 
@@ -189,13 +183,13 @@ Expressions can include variables, property access, arithmetic, function and met
 
 Most template systems have built-in control-flow constructs like 'if' and 'repeat'. `stampino` includes these too, but they are implemented as plugins called handlers, just like user-provided handlers.
 
-Handlers implement the stampino render function signature:
+Handlers implement the Stampino render function signature:
 
 ```javascript
 function(template, model, renderers, handlers)
 ```
 
-They can call incremental-dom functions to render nodes, but usually they will perform some logic and call back into stampino's default `renderNode` with new data and/or a new template node to render.
+They can mutate the `TemplateResult` to alter the final rendered DOM, sort of like template middleware. but usually they will perform some logic and call back into Stampino's default `evaluateTemplate` with new data and/or a new template node to render.
 
 Handlers are passed to the public render function:
 
@@ -203,11 +197,11 @@ Handlers are passed to the public render function:
 render(template, container, model, {
   handlers: {
     // renders a template twice
-    'echo': function(template, model, renderers, handlers) {
-      renderNode(template.content, model, renderers, handlers);
-      renderNode(template.content, model, renderers, handlers);
+    echo: function (template, model, renderers, handlers) {
+      evaluateTemplate(template.content, model, renderers, handlers);
+      evaluateTemplate(template.content, model, renderers, handlers);
     },
-  }
+  },
 });
 ```
 
@@ -216,23 +210,21 @@ Handlers are referenced inside templates via the `type` attribute:
 ```html
 <template>
   <h1>Do I head an echo?</h1>
-  <template type="echo">
-    Yes, I hear an echo!
-  </template>
+  <template type="echo"> Yes, I hear an echo! </template>
 </template>
 ```
 
-You can think of this very much like a function call for templates, and because handlers are just stampino render functions, they are simple to write. Here's the entire implementation of the 'if' handler:
+You can think of this very much like a function call for templates, and because handlers are just Stampino render functions, they are simple to write. Here's the entire implementation of the 'if' handler:
 
 ```javascript
 handlers: {
   'if': function(template, model, renderers, handlers) {
     let ifAttribute = template.getAttribute('if');
     if (ifAttribute && getValue(ifAttribute, model)) {
-      renderNode(template.content, model, renderers, handlers);
+      evaluateTemplate(template.content, model, renderers, handlers);
     }
   },
 },
 ```
 
-Note: `getValue()` evaluates an expression against a model. It's provided by the stampino library.
+Note: `getValue()` evaluates an expression against a model. It's provided by the Stampino library.
