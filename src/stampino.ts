@@ -382,11 +382,7 @@ const makeLitTemplate = (template: HTMLTemplateElement): StampinoTemplate => {
         const attributeNames = element.getAttributeNames();
         for (const attributeName of attributeNames) {
           const attributeValue = element.getAttribute(attributeName)!;
-          // TODO: use alternative to negative lookbehind
-          // (but it's so convenient!)
-          const splitValue = attributeValue.split(
-            /(?<!\\){{(.*?)(?:(?<!\\)}})/g
-          );
+          const splitValue = attributeValue.split(/(?!\\){{(.*?)(?:(?!\\)}})/g);
           if (splitValue.length === 1) {
             continue;
           }
@@ -432,7 +428,7 @@ const makeLitTemplate = (template: HTMLTemplateElement): StampinoTemplate => {
     } else if (node.nodeType === Node.TEXT_NODE) {
       const textNode = node as Text;
       const text = textNode.textContent!;
-      const strings = text.split(/(?<!\\){{(.*?)(?:(?<!\\)}})/g);
+      const strings = text.split(/(?!\\){{(.*?)(?:(?!\\)}})/g);
       if (strings.length > 1) {
         textNode.textContent = strings[0].replace('\\{{', '{{');
       } else {
