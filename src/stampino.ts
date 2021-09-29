@@ -430,7 +430,7 @@ const makeLitTemplate = (template: HTMLTemplateElement): StampinoTemplate => {
         }
       }
     } else if (node.nodeType === Node.TEXT_NODE) {
-      const textNode = node as Text;
+      let textNode = node as Text;
       const text = textNode.textContent!;
       const strings = text.split(/(?<!\\){{(.*?)(?:(?<!\\)}})/g);
       if (strings.length > 1) {
@@ -454,6 +454,8 @@ const makeLitTemplate = (template: HTMLTemplateElement): StampinoTemplate => {
           document.createComment(''),
           textNode.nextSibling
         );
+        textNode = newTextNode
+
         // This TreeWalker isn't configured to walk comment nodes, but this
         // node will be returned next time through the loop. This is the easiest
         // way to get the walker to proceed to the next successor after the
