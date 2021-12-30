@@ -4,8 +4,8 @@ import {CompiledTemplate, CompiledTemplateResult} from 'lit-html';
 import {parse, Parser, EvalAstFactory} from 'jexpr';
 import type {Expression, Scope} from 'jexpr/lib/eval';
 
-import {_Σ} from 'lit-html/private-ssr-support.js';
-const {AttributePart, PropertyPart, BooleanAttributePart, EventPart} = _Σ;
+import {_$LH} from 'lit-html/private-ssr-support.js';
+const {AttributePart, PropertyPart, BooleanAttributePart, EventPart} = _$LH;
 
 const astFactory = new EvalAstFactory();
 const expressionCache = new Map<string, Expression | undefined>();
