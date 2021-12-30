@@ -1,5 +1,6 @@
-import {render as renderLit, Template, nothing} from 'lit-html';
-import {CompiledTemplate, CompiledTemplateResult} from 'lit-html';
+import type {CompiledTemplate, CompiledTemplateResult} from 'lit-html';
+import type {Template} from 'lit-html/private-ssr-support.js';
+import {render as renderLit, nothing} from 'lit-html';
 
 import {parse, Parser, EvalAstFactory} from 'jexpr';
 import type {Expression, Scope} from 'jexpr/lib/eval';
