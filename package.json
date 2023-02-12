@@ -29,7 +29,7 @@
     "@web/test-runner-mocha": "^0.7.2",
     "@web/test-runner-playwright": "^0.8.4",
     "prettier": "^2.2.1",
-    "tachometer": "^0.5.8",
+    "tachometer": "^0.7.0",
     "typescript": "^4.2.0"
   },
   "keywords": [
