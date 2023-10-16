@@ -1,11 +1,12 @@
+//@ts-ignore
 import {render as renderLit, Template, nothing} from 'lit-html';
 import {CompiledTemplate, CompiledTemplateResult} from 'lit-html';
 
 import {parse, Parser, EvalAstFactory} from 'jexpr';
 import type {Expression, Scope} from 'jexpr/lib/eval';
 
-import {_Σ} from 'lit-html/private-ssr-support.js';
-const {AttributePart, PropertyPart, BooleanAttributePart, EventPart} = _Σ;
+import {_$LH} from 'lit-html/private-ssr-support.js';
+const {AttributePart, PropertyPart, BooleanAttributePart, EventPart} = _$LH;
 
 const astFactory = new EvalAstFactory();
 const expressionCache = new Map<string, Expression | undefined>();
@@ -98,6 +99,7 @@ export const repeatHandler: TemplateHandler = (
       const itemModel = Object.create(model);
       itemModel.item = item;
       itemModel.index = index;
+      //@ts-ignore
       itemModel['this'] = model['this'] ?? model;
 
       const values = litTemplate.parts.map((part) =>
@@ -283,6 +285,7 @@ export const getLitTemplate = (
 
 const makeLitTemplate = (template: HTMLTemplateElement): StampinoTemplate => {
   const litTemplate: StampinoTemplate = {
+    //@ts-ignore
     h: (undefined as unknown) as TrustedHTML,
     el: template.cloneNode(true) as HTMLTemplateElement,
     parts: [],
